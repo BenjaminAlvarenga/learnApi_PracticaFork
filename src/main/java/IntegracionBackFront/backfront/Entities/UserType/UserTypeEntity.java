@@ -38,7 +38,7 @@ public class UserTypeEntity {
                 "descripcion='" + descripcion + '\'' +
                 ", id=" + id +
                 ", nombreTipo='" + nombreTipo + '\'' +
-                ", usuarios=" + usuarios +
+                ", usuariosCount=" + (usuarios != null ? usuarios.size() : 0) +
                 '}';
     }
 }

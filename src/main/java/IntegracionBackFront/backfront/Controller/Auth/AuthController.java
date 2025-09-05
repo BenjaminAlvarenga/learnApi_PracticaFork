@@ -5,16 +5,13 @@ import IntegracionBackFront.backfront.Models.DTO.Users.UserDTO;
 import IntegracionBackFront.backfront.Services.Auth.AuthService;
 import IntegracionBackFront.backfront.Utils.JWTUtils;
 import IntegracionBackFront.backfront.Utils.JwtCookieAuthFilter;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 @RestController
@@ -26,12 +23,14 @@ public class AuthController {
     @Autowired
     private JWTUtils jwtUtils;
 
+    @PostMapping("/login")
     private ResponseEntity<String> login (@Valid @RequestBody UserDTO data, HttpServletResponse response){
         if (data.getCorreo() == null || data.getCorreo().isBlank() ||
                 data.getContrasena() == null || data.getContrasena().isBlank()) {
             return ResponseEntity.status(401).body("Error: Credenciales incompletas");
         }
         if (service.Login(data.getCorreo(), data.getContrasena())){
+            addTokenCookie(response, data.getCorreo());
             return ResponseEntity.ok("Inicio de sesiòn exitoso");
         }
         return ResponseEntity.status(401).body("No pasar");
@@ -48,11 +47,11 @@ public class AuthController {
                     user.getTipoUsuario().getNombreTipo() // ← Usar el nombre real del tipo
             );
 
-            Cookie cookie = new Cookie("authToken", token);
+            Cookie cookie =  new Cookie("authToken", token);
             cookie.setHttpOnly(true);
             cookie.setSecure(true);
             cookie.setPath("/");
-            cookie.setMaxAge(86400);
+            cookie.setMaxAge(86400000);
             response.addCookie(cookie);
         }
     }

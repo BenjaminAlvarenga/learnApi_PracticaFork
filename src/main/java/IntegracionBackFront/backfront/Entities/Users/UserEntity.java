@@ -49,7 +49,7 @@ public class UserEntity {
                 ", correo='" + correo + '\'' +
                 ", contrasena='" + contrasena + '\'' +
                 ", fechaRegistro=" + fechaRegistro +
-                ", tipoUsuario=" + tipoUsuario +
+                ", tipoUsuarioId=" + (tipoUsuario != null ? tipoUsuario.getId() : null) +
                 '}';
     }
 }
